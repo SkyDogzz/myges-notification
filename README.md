@@ -48,4 +48,6 @@ Voici les étapes pour créer un Cronjob qui exécutera le script toutes les 10 
 
 Le Cronjob que vous venez de créer exécutera le script toutes les 10 minutes. Si vous souhaitez changer la fréquence d'exécution, modifiez le premier champ */10 qui spécifie le nombre de minutes entre chaque exécution.
 
+Il est important de noter que le cron doit avoir les permissions nécessaires pour exécuter le script et créer les fichiers requis. Par exemple, si l'utilisateur "ubuntu" est utilisé, le script doit être placé dans un fichier appartenant à "ubuntu" et le cron doit être créé avec l'utilisateur "ubuntu".
+
 Notez que cette méthode est spécifique à Linux. Sur d'autres systèmes d'exploitation, comme Windows, il existe des alternatives similaires pour planifier des tâches récurrentes.
