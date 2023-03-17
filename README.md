@@ -38,10 +38,10 @@ Voici les étapes pour créer un Cronjob qui exécutera le script toutes les 10 
 
 1. Ouvrez une session de terminal sur votre système Linux.
 2. Tapez la commande crontab -e pour éditer le fichier Crontab.
-3. Ajoutez la ligne suivante en remplaçant /path/to/notes.js par le chemin absolu vers votre script notes.js :
+3. Ajoutez la ligne suivante en remplaçant /path/folder par le chemin absolu vers la ou le script est stocké et /path/to/notes.js par le chemin absolu vers votre script notes.js :
 
 ```bash
-*/10 * * * * /usr/bin/node /path/to/notes.js
+*/10 * * * * /path/folder /usr/bin/node /path/to/notes.js
 ```
 
 4. Enregistrez et fermez le fichier Crontab.
