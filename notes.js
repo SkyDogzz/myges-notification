@@ -77,6 +77,9 @@ function sleep(ms) {
             })
             .then(message => console.log(message.sid))
         //.done();
+        await page.screenshot({ path: 'newNotes.png' });
+    } else {
+        await page.screenshot({ path: 'oldNotes.png' });
     }
 
     fs.renameSync('newnotes.html', 'notes.html');
