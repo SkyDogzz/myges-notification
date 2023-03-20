@@ -53,8 +53,13 @@ function sleep(ms) {
     console.log("Waiting 5 sec before continuing")
     await sleep(5000);
 
+    await page.setViewport({ width: 1920, height: 1080 });
+
     const element = await page.$("#marksForm\\:marksWidget\\:coursesTable");
 
+    await page.evaluate(() => {
+        document.querySelector("#marksForm\\:marksWidget\\:coursesTable").scrollIntoView();
+    });
     const fs = require('fs');
     if (!fs.existsSync('notes.html')) {
         fs.writeFileSync('notes.html', await page.evaluate(element => element.innerHTML, element));
