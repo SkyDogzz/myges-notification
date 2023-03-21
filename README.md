@@ -33,8 +33,11 @@ Remplacez VOTRE_ACCOUNT_SID_TWILIO et VOTRE_AUTH_TOKEN_TWILIO par les informatio
 
 Pour les informations username et password, utilisez votre nom d'utilisateur et votre mot de passe MyGES.
 'semesterSelector' doit être configuré avec le sélecteur CSS correspondant au semestre actuel.
+
 'body' doit contenir le texte que vous souhaitez envoyer dans votre SMS.
+
 'from' doit être configuré avec votre numéro Twilio.
+
 'to' doit contenir le numéro de téléphone portable qui recevra le SMS.
 
 ## Utilisation
