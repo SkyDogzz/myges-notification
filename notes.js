@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-
 require('dotenv').config();
 
 const twilio = {
@@ -25,144 +24,148 @@ function sleep(ms) {
 }
 
 function compareNotes() {
-    //compare les deux fichiers et renvoie un tableau de différences
-    var fs = require('fs');
-    var file1 = fs.readFileSync('newnotes.html', 'utf8');
-    var file2 = fs.readFileSync('notes.html', 'utf8');
+    const fs = require('fs');
+    const file1 = fs.readFileSync('newnotes.html', 'utf8');
+    const file2 = fs.readFileSync('notes.html', 'utf8');
 
-    //les fichiers contiennent des balises html, on va donc les parser
-    var parse = require('node-html-parser').parse;
-    var root1 = parse(file1);
-    var root2 = parse(file2);
+    const parse = require('node-html-parser').parse;
+    const root1 = parse(file1);
+    const root2 = parse(file2);
 
-    //on récupère les tableaux de notes
-    var table1 = root1.querySelector('table');
-    var table2 = root2.querySelector('table');
+    const table1 = root1.querySelector('table');
+    const table2 = root2.querySelector('table');
 
-    //on récupère les titres des colonnes
-    var titles1 = table1.querySelectorAll('th');
-    var titles2 = table2.querySelectorAll('th');
+    const titles1 = table1.querySelectorAll('th');
 
-    //on récupère les lignes de notes
-    var rows1 = table1.querySelectorAll('tr');
-    var rows2 = table2.querySelectorAll('tr');
+    const rows1 = table1.querySelectorAll('tr');
+    const rows2 = table2.querySelectorAll('tr');
 
-    //on récupère les notes
-    var notes1 = [];
-    var notes2 = [];
+    const notes1 = [];
 
-    //on récupère les notes de chaque ligne
-    for (var i = 0; i < rows1.length; i++) {
-        var row1 = rows1[i];
-        var row2 = rows2[i];
-        var notesRow1 = row1.querySelectorAll('td');
-        var notesRow2 = row2.querySelectorAll('td');
-        var notesRow = [];
-        for (var j = 0; j < notesRow1.length; j++) {
-            var note1 = notesRow1[j];
-            var note2 = notesRow2[j];
+    for (let i = 0; i < rows1.length; i++) {
+        const row1 = rows1[i];
+        const row2 = rows2[i];
+        const notesRow1 = row1.querySelectorAll('td');
+        const notesRow2 = row2.querySelectorAll('td');
+        const notesRow = [];
+        for (let j = 0; j < notesRow1.length; j++) {
+            const note1 = notesRow1[j];
+            const note2 = notesRow2[j];
             notesRow.push([note1, note2]);
         }
         notes1.push(notesRow);
     }
 
-    //on compare les notes et on renvoie un tableau de différences contenant les notes, les titres des colonnes et les lignes
-    var differences = [];
-    for (var i = 0; i < notes1.length; i++) {
-        var notesRow = notes1[i];
-        for (var j = 0; j < notesRow.length; j++) {
-            var note = notesRow[j];
+    const differences = [];
+    for (let i = 0; i < notes1.length; i++) {
+        const notesRow = notes1[i];
+        for (let j = 0; j < notesRow.length; j++) {
+            const note = notesRow[j];
             if (note[0].innerHTML !== note[1].innerHTML) {
                 differences.push([note[0], titles1[j].querySelector('span'), rows1[i].querySelector('span')]);
             }
         }
     }
 
-    //on renvoie un message contenant les différences
-    var message = "";
-    for (var i = 0; i < differences.length; i++) {
-        var difference = differences[i];
-        var note = difference[0];
-        var title = difference[1];
-        var row = difference[2];
-        message += "Nouvelle note: " + note.innerHTML + " pour " + title.innerHTML + " dans " + row.innerHTML + " est disponible !";
+    let messageBody = "";
+    for (let i = 0; i < differences.length; i++) {
+        const difference = differences[i];
+        const note = difference[0];
+        const title = difference[1];
+        const row = difference[2];
+        messageBody += "Nouvelle note: " + note.innerHTML + " pour " + title.innerHTML + " dans " + row.innerHTML + " est disponible !";
     }
 
-    return message;
+    return messageBody;
 }
 
 (async () => {
+    console.log("Démarrage de Puppeteer...");
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    console.log("Navigating to https://myges.fr/login")
+    console.log("Navigation vers https://myges.fr/login...");
     await page.goto("https://myges.fr/login");
 
-    console.log("Typing username and password")
+    console.log("Saisie du nom d'utilisateur et du mot de passe...");
     await page.type("#username", myges.username);
     await page.type("#password", myges.password);
 
-    console.log("Clicking on submit button")
+    console.log("Clic sur le bouton de connexion...");
     await page.click(".input_submit");
 
-    console.log("Waiting 5 sec before continuing")
+    console.log("Attente de 5 secondes avant de continuer...");
     await sleep(5000);
 
+    console.log("Navigation vers la page des notes...");
     await page.goto("https://myges.fr/student/marks");
 
+    console.log("Clic sur le sélecteur de période...");
     await page.click("#marksForm\\:j_idt172\\:periodSelect");
 
-    console.log("Waiting 5 sec before continuing")
+    console.log("Attente de 5 secondes avant de continuer...");
     await sleep(5000);
 
+    console.log("Sélection du semestre en cours...");
     await page.click(process.env.semesterSelector);
 
-    console.log("Waiting 5 sec before continuing")
+    console.log("Attente de 5 secondes avant de continuer...");
     await sleep(5000);
 
+    console.log("Redimensionnement de la fenêtre du navigateur...");
     await page.setViewport({ width: 1920, height: 1080 });
 
-    const element = await page.$("#marksForm\\:marksWidget\\:coursesTable");
-
+    console.log("Défilement jusqu'à la table des notes...");
     await page.evaluate(() => {
         document.querySelector("#marksForm\\:marksWidget\\:coursesTable").scrollIntoView();
-    });
+    });    
+    
+    const element = await page.$("#marksForm\\:marksWidget\\:coursesTable");
+
+    console.log("Vérification de l'existence du fichier 'notes.html'...");
     const fs = require('fs');
     if (!fs.existsSync('notes.html')) {
+        console.log("Le fichier 'notes.html' n'existe pas encore, création du fichier...");
         fs.writeFileSync('notes.html', await page.evaluate(element => element.innerHTML, element));
-        console.log("notes.html created");
+        console.log("Le fichier 'notes.html' a été créé !");
         await browser.close();
         return;
     }
 
+    console.log("Le fichier 'notes.html' existe déjà, création du fichier 'newnotes.html'...");
     fs.writeFileSync('newnotes.html', await page.evaluate(element => element.innerHTML, element));
 
+    console.log("Comparaison des notes...");
     const file1 = fs.readFileSync('notes.html', 'utf8');
     const file2 = fs.readFileSync('newnotes.html', 'utf8');
 
     if (file1 !== file2) {
-        console.log("New notes available !");
-        const messages = await compareNotes();
+        console.log("Des nouvelles notes sont disponibles !");
+        const messageBody = await compareNotes();
         let bodyPlus = "";
-        for (let i = 0; i < messages.length; i++) {
-            bodyPlus += messages[i];
+        for (let i = 0; i < messageBody.length; i++) {
+            bodyPlus += messageBody[i];
         }
         message.body += bodyPlus;
 
+        console.log("Envoi du message Twilio...");
         client.messages
             .create({
                 body: message.body,
                 from: message.from,
                 to: message.to
             })
-            .then(message => console.log(message.sid))
-        //.done();
+            .then(message => console.log("Message Twilio envoyé avec succès !"))
+            .catch(error => console.error("Erreur lors de l'envoi du message Twilio : ", error));
         await page.screenshot({ path: 'newNotes.png' });
     } else {
+        console.log("Il n'y a pas de nouvelles notes.");
         await page.screenshot({ path: 'oldNotes.png' });
     }
 
+    console.log("Renommage du fichier 'newnotes.html' en 'notes.html'...");
     fs.renameSync('newnotes.html', 'notes.html');
 
+    console.log("Fermeture de Puppeteer...");
     await browser.close();
 })();
