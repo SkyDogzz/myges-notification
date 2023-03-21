@@ -7,24 +7,36 @@ Ce programme en Node.js simule une navigation sur un site web. Il a pour but de 
 3. Créez un fichier .env avec les informations nécessaires (voir ci-dessous).
 4. Lancez le programme avec node notes.js.
 
-## Configuration
+## Création d'un compte Twilio et configuration du fichier .env
 
-Le fichier .env doit contenir les informations suivantes :
-```bash
+Pour utiliser le service Twilio, vous devez créer un compte gratuit sur leur site web. Une fois que vous avez créé votre compte, vous pouvez récupérer votre accountSid et votre authToken dans votre tableau de bord Twilio.
+
+Le fichier .env doit être configuré avec les informations suivantes :
+
+```
+bash
+
 #twilio
-accountSid= #sid twilio
-authToken= #token twilio
+accountSid=VOTRE_ACCOUNT_SID_TWILIO
+authToken=VOTRE_AUTH_TOKEN_TWILIO
 
 #myges
-username= #username myges
-password= #password myges
+username=VOTRE_NOM_D_UTILISATEUR_MYGES
+password=VOTRE_MOT_DE_PASSE_MYGES
 semesterSelector="[data-label='2022-2023 - ESGI - 3ESGI  - Semestre 1']"
 
 #message
-body= #message
-from= #from twilio number
-to= #to twilio number
+body=VOTRE_MESSAGE
+from=VOTRE_NUMERO_TWILIO
+to=LE_NUMERO_DE_DESTINATION_DU_SMS
 ```
+Remplacez VOTRE_ACCOUNT_SID_TWILIO et VOTRE_AUTH_TOKEN_TWILIO par les informations correspondantes de votre compte Twilio.
+
+Pour les informations username et password, utilisez votre nom d'utilisateur et votre mot de passe MyGES.
+'semesterSelector' doit être configuré avec le sélecteur CSS correspondant au semestre actuel.
+'body' doit contenir le texte que vous souhaitez envoyer dans votre SMS.
+'from' doit être configuré avec votre numéro Twilio.
+'to' doit contenir le numéro de téléphone portable qui recevra le SMS.
 
 ## Utilisation
 
