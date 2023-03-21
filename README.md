@@ -13,8 +13,7 @@ Pour utiliser le service Twilio, vous devez créer un compte gratuit sur leur si
 
 Le fichier .env doit être configuré avec les informations suivantes :
 
-```
-bash
+```bash
 
 #twilio
 accountSid=VOTRE_ACCOUNT_SID_TWILIO
