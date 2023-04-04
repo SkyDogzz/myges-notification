@@ -65,3 +65,5 @@ Le Cronjob que vous venez de créer exécutera le script toutes les 10 minutes. 
 Il est important de noter que le cron doit avoir les permissions nécessaires pour exécuter le script et créer les fichiers requis. Par exemple, si l'utilisateur "ubuntu" est utilisé, le script doit être placé dans un fichier appartenant à "ubuntu" et le cron doit être créé avec l'utilisateur "ubuntu".
 
 Notez que cette méthode est spécifique à Linux. Sur d'autres systèmes d'exploitation, comme Windows, il existe des alternatives similaires pour planifier des tâches récurrentes.
+
+Il est important de faire attention à ne pas formater le fichier "notes.html" après la première utilisation du script, car cela peut entraîner des erreurs de comparaison dans le traitement des données. 
