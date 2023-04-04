@@ -118,8 +118,8 @@ function compareNotes() {
     console.log("Défilement jusqu'à la table des notes...");
     await page.evaluate(() => {
         document.querySelector("#marksForm\\:marksWidget\\:coursesTable").scrollIntoView();
-    });    
-    
+    });
+
     const element = await page.$("#marksForm\\:marksWidget\\:coursesTable");
 
     console.log("Vérification de l'existence du fichier 'notes.html'...");
