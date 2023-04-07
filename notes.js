@@ -1,23 +1,12 @@
 const puppeteer = require("puppeteer");
-const dotenv = require('dotenv');
+const dotenv = require('dotenv').config();
 const twilio = require('twilio')(process.env.accountSid, process.env.authToken);
+const myges = { username: process.env.username, password: process.env.password };
+const message = { body: process.env.body, from: process.env.from, to: process.env.to };
 const fs = require('fs');
 const parse = require('node-html-parser').parse;
 
-dotenv.config();
-
-const myges = {
-    username: process.env.username,
-    password: process.env.password
-};
-
-const message = {
-    body: process.env.body,
-    from: process.env.from,
-    to: process.env.to
-};
-
-async function sleep(ms) {
+function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -88,7 +77,10 @@ async function compareNotes() {
     await page.type("#password", myges.password);
 
     console.log("Clic sur le bouton de connexion...");
-    await page.click(".input_submit");
+    await Promise.all([
+        page.click(".input_submit"),
+        page.waitForNavigation({ waitUntil: 'networkidle0' })
+    ]);
 
     console.log("Attente de 5 secondes avant de continuer...");
     await sleep(5000);
@@ -121,30 +113,33 @@ async function compareNotes() {
     console.log("Vérification de l'existence du fichier 'notes.html'...");
     if (!fs.existsSync('notes.html')) {
         console.log("Le fichier 'notes.html' n'existe pas encore, création du fichier...");
-        fs.writeFileSync('notes.html', await element.evaluate(element => element.innerHTML));
+        fs.writeFileSync('notes.html', await page.evaluate(element => element.innerHTML, element));
         console.log("Le fichier 'notes.html' a été créé !");
         await browser.close();
         return;
     }
 
     console.log("Le fichier 'notes.html' existe déjà, création du fichier 'newnotes.html'...");
-    fs.writeFileSync('newnotes.html', await element.evaluate(element => element.innerHTML));
+    fs.writeFileSync('newnotes.html', await page.evaluate(element => element.innerHTML, element));
 
     console.log("Comparaison des notes...");
-    const messageBody = await compareNotes();
-    if (messageBody !== "") {
+    const file1 = fs.readFileSync('notes.html', 'utf8');
+    const file2 = fs.readFileSync('newnotes.html', 'utf8');
+
+    if (file1 !== file2) {
         console.log("Des nouvelles notes sont disponibles !");
+        const messageBody = await compareNotes();
         message.body += messageBody;
 
         console.log("Envoi du message Twilio...");
-        twilio.messages.create({
-            body: message.body,
-            from: message.from,
-            to: message.to
-        })
+        twilio.messages
+            .create({
+                body: message.body,
+                from: message.from,
+                to: message.to
+            })
             .then(message => console.log("Message Twilio envoyé avec succès !"))
             .catch(error => console.error("Erreur lors de l'envoi du message Twilio : ", error));
-
         await page.screenshot({ path: 'newNotes.png' });
     } else {
         console.log("Il n'y a pas de nouvelles notes.");
